@@ -2,12 +2,14 @@
   "name": "schoolsystem",
   "version": "1.0.0",
   "description": "School Management System",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "cd backend && node server.js",
+    "start": "node backend/server.js",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && serve -s . -l 3000",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd backend && npm install"
   },
   "dependencies": {
     "concurrently": "^8.2.0"
