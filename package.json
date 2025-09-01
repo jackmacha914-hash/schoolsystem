@@ -4,7 +4,7 @@
   "description": "School Management System",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node server.js",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && serve -s . -l 3000",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
