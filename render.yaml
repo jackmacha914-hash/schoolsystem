@@ -2,6 +2,7 @@ services:
   - type: web
     name: schoolsystem
     env: node
+    nodeVersion: 18.x
     buildCommand: chmod +x render-build.sh && ./render-build.sh
     startCommand: node server.js
     envVars:
