@@ -1,0 +1,386 @@
+/* =============================
+   🧽 Main Navigation Bar
+============================= */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #004080, #002d5a);
+  color: #ffffff;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+header:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  color: #ffcc00;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* =============================
+   📌 Navigation Menu
+============================= */
+nav ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  position: relative;
+  padding: 10px 18px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+  color: #ffcc00;
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
+}
+
+nav ul li a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #ffcc00;
+  transform: translateX(-50%) scaleX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+nav ul li a:hover::after,
+nav ul li a.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* =============================
+   🍔 Hamburger Menu (Mobile)
+============================= */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger div {
+  width: 28px;
+  height: 3px;
+  background-color: #ffffff;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* =============================
+   📱 Responsive Design
+============================= */
+@media (max-width: 768px) {
+  nav {
+    position: relative;
+  }
+
+  nav ul {
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100%;
+    padding: 20px;
+    background: rgba(0, 45, 90, 0.98);
+    display: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 12px 12px;
+  }
+
+  nav ul.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* Student Activities Section */
+.student-activities {
+  padding: 120px 20px;
+  background: linear-gradient(135deg, rgba(240, 240, 240, 0.9), rgba(255, 255, 255, 0.8));
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.overview-flex {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;  /* Initially hidden for animation */
+  transform: translateY(30px); /* Start from below */
+  transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+}
+
+.overview-flex[data-aos="fade-left"],
+.overview-flex[data-aos="fade-right"] {
+  opacity: 1;
+  transform: translateY(0); /* Bring the element to its normal position */
+}
+
+.overview-text {
+  flex: 1;
+  text-align: left;
+  animation: fadeInLeft 1s ease-out; /* Text fade-in effect */
+}
+
+.overview-text h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.overview-text p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #555;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Hover effect on text */
+.overview-text:hover {
+  transform: scale(1.05);
+}
+
+.overview-img img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effects for images */
+.overview-img img:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.activity-image {
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.activity-image:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+/* Parallax Effect on Images */
+@keyframes parallax {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.overview-img img {
+  animation: parallax 2s infinite ease-in-out;
+}
+
+/* Animation for text to fade in */
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Additional tweaks for responsiveness */
+@media (max-width: 768px) {
+  .overview-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .overview-text h2 {
+    font-size: 28px;
+  }
+
+  .overview-text p {
+    font-size: 14px;
+  }
+
+  .overview-img img {
+    max-width: 100%;
+  }
+}
+/* Student Support Section */
+.values {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.values h2 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  animation: fadeInDown 1s ease-out;
+}
+
+.values-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.values-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.values-list li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #333;
+  transition: transform 0.3s ease, color 0.3s ease;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.value-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.values-list li i {
+  font-size: 28px;
+  color: #003366;
+  transition: transform 0.3s ease;
+}
+
+.values-list li p {
+  font-weight: 500;
+  font-size: 18px;
+  color: #333;
+}
+
+/* Hover Effects for List Items */
+.values-list li:hover {
+  transform: translateY(-8px);
+  color: #003366;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.values-list li:hover i {
+  transform: translateX(-6px);
+}
+
+/* Animation */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .values h2 {
+    font-size: 32px;
+  }
+
+  .values-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .values-list li {
+    font-size: 16px;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .values-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .values-list li {
+    font-size: 14px;
+    padding: 15px;
+  }
+}

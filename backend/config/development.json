@@ -1,0 +1,5 @@
+{
+  "jwtSecret": "your_jwt_secret_key_here",
+  "mongoURI": "mongodb://localhost:27017/schooldb",
+  "port": 5000
+}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - School Management System</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/dashboard-new.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/favicon.ico">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>SchoolMS</h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="#dashboard" class="nav-link active">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#students" class="nav-link">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Students</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#teachers" class="nav-link">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Teachers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#classes" class="nav-link">
+                            <i class="fas fa-chalkboard"></i>
+                            <span>Classes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#attendance" class="nav-link">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>Attendance</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#grades" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Grades</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#timetable" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Timetable</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="left-section">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="right-section">
+                    <div class="user-menu">
+                        <button class="btn btn-icon" id="notifications-btn">
+                            <i class="far fa-bell"></i>
+                            <span class="badge">3</span>
+                        </button>
+                        <div class="user-avatar">
+                            <img src="https://via.placeholder.com/40" alt="User" class="avatar">
+                            <span>Admin User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content-wrapper">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Students</h3>
+                            <p class="stat-number" id="student-count">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Teachers</h3>
+                            <p class="stat-number" id="teacher-count">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chalkboard"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Classes</h3>
+                            <p class="stat-number" id="class-count">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Today's Attendance</h3>
+                            <p class="stat-number" id="attendance-count">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                        <a href="#" class="btn btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-list">
+                            <!-- Activity items will be dynamically loaded here -->
+                            <p class="empty-state">No recent activities found.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <!-- Loading Indicator -->
+    <div class="loading-indicator" id="loading-indicator">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../js/dashboard-new.js"></script>
+    
+    <script>
+        // Example of using the dashboard module
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show a welcome notification
+            setTimeout(() => {
+                Dashboard.showNotification('Welcome to your dashboard!', 'success');
+            }, 1000);
+            
+            // Example navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = e.currentTarget.getAttribute('href');
+                    console.log(`Navigating to: ${target}`);
+                    // In a real app, you would load the content for this section
+                });
+            });
+        });
+    </script>
+</body>
+</html>

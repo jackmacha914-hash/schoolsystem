@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Debugger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .info-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Authentication Debugger</h1>
+    
+    <div class="info-box">
+        <h2>LocalStorage Contents</h2>
+        <pre id="localStorageContent">Loading...</pre>
+        <button onclick="refreshStorage()">Refresh</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+    </div>
+    
+    <div class="info-box">
+        <h2>Test API Endpoints</h2>
+        <div>
+            <button onclick="testAuth()">Test /api/auth/me</button>
+            <button onclick="testMarks()">Test /api/marks (GET)</button>
+        </div>
+        <div id="apiResponse">
+            <h3>Response:</h3>
+            <pre id="responseContent">Click a button to test an endpoint</pre>
+        </div>
+    </div>
+
+    <script>
+        // Display current localStorage
+        function displayStorage() {
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                try {
+                    // Try to parse as JSON, if it fails, use as is
+                    storage[key] = JSON.parse(localStorage.getItem(key));
+                } catch (e) {
+                    storage[key] = localStorage.getItem(key);
+                }
+            }
+            document.getElementById('localStorageContent').textContent = JSON.stringify(storage, null, 2);
+        }
+
+        // Refresh storage display
+        function refreshStorage() {
+            displayStorage();
+        }
+
+        // Clear storage
+        function clearStorage() {
+            if (confirm('Are you sure you want to clear localStorage? This will log you out.')) {
+                localStorage.clear();
+                displayStorage();
+                alert('LocalStorage cleared. Please refresh the page or log in again.');
+            }
+        }
+
+        // Test authentication
+        async function testAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                document.getElementById('responseContent').textContent = 'No token found in localStorage';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'x-auth-token': token,
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('responseContent').innerHTML = 
+                    `Status: ${response.status} ${response.statusText}\n\n` +
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseContent').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Test marks endpoint
+        async function testMarks() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                document.getElementById('responseContent').textContent = 'No token found in localStorage';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/marks', {
+                    headers: {
+                        'x-auth-token': token,
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('responseContent').innerHTML = 
+                    `Status: ${response.status} ${response.statusText}\n\n` +
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseContent').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Initialize
+        displayStorage();
+    </script>
+</body>
+</html>

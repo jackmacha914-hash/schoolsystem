@@ -1,0 +1,66 @@
+<!-- User Edit Modal -->
+<div id="user-edit-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" id="close-user-edit-modal">&times;</span>
+    <h3>Edit User</h3>
+    <form id="user-edit-form">
+      <input type="hidden" id="edit-user-id" />
+      <div class="form-group">
+        <label for="edit-user-name">Name:</label>
+        <input type="text" id="edit-user-name" required />
+      </div>
+      <div class="form-group">
+        <label for="edit-user-email">Email:</label>
+        <input type="email" id="edit-user-email" required />
+      </div>
+      <div class="form-group">
+        <label for="edit-user-username">Username:</label>
+        <input type="text" id="edit-user-username" required />
+      </div>
+      <div class="form-group">
+        <label for="edit-user-role">Role:</label>
+        <select id="edit-user-role" required>
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Admin">Admin</option>
+          <option value="Accountant">Accountant</option>
+          <option value="Parent">Parent</option>
+        </select>
+      </div>
+      <button type="submit">Save Changes</button>
+      <div id="user-edit-msg" style="display:none;margin-top:8px;"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Universal Edit Modal -->
+<div id="universal-edit-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" id="close-universal-edit-modal">&times;</span>
+    <h3 id="universal-edit-title">Edit</h3>
+    <form id="universal-edit-form"></form>
+    <div id="universal-edit-msg" style="display:none;margin-top:8px;"></div>
+  </div>
+</div>
+
+<!-- Universal Confirm Modal -->
+<div id="universal-confirm-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" id="close-universal-confirm-modal">&times;</span>
+    <h3 id="universal-confirm-title">Confirm Action</h3>
+    <p id="universal-confirm-message"></p>
+    <button id="universal-confirm-yes">Yes</button>
+    <button id="universal-confirm-no">No</button>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirm-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" id="close-confirm-modal">&times;</span>
+    <h3 id="confirm-modal-title">Confirm Action</h3>
+    <p id="confirm-modal-message"></p>
+    <button id="confirm-modal-yes">Yes</button>
+    <button id="confirm-modal-no">No</button>
+  </div>
+</div>

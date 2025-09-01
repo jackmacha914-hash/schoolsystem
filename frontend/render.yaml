@@ -1,0 +1,12 @@
+static_sites:
+  - type: static_site
+    name: school-management-frontend
+    buildCommand: npm install && npm run build
+    publicPath: /build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://school-management-backend.onrender.com
+    routes:
+      - path: /*
+        destination: /index.html
+    plan: free

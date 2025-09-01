@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Name | Home</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+     <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">School Name</div>
+        <nav class="sticky-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="academics.html">Academics</a></li>
+                <li><a href="admission.html">Admissions</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+     <style>
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-6">School Gallery</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="text-center">
+                <img src="https://via.placeholder.com/300" class="rounded-lg shadow-md cursor-pointer" onclick="openLightbox(this.src, 'Science Fair 2024')" />
+                <p class="mt-2 font-semibold">Science Fair 2024</p>
+            </div>
+            <div class="text-center">
+                <img src="https://via.placeholder.com/300" class="rounded-lg shadow-md cursor-pointer" onclick="openLightbox(this.src, 'Sports Day')" />
+                <p class="mt-2 font-semibold">Sports Day</p>
+            </div>
+            <div class="text-center">
+                <img src="https://via.placeholder.com/300" class="rounded-lg shadow-md cursor-pointer" onclick="openLightbox(this.src, 'Art Exhibition')" />
+                <p class="mt-2 font-semibold">Art Exhibition</p>
+            </div>
+            <div class="text-center">
+                <img src="https://via.placeholder.com/300" class="rounded-lg shadow-md cursor-pointer" onclick="openLightbox(this.src, 'Annual Day')" />
+                <p class="mt-2 font-semibold">Annual Day</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <div class="text-center">
+            <img id="lightbox-img" src="" alt="" />
+            <p id="lightbox-text" class="text-white mt-2 text-lg font-bold"></p>
+        </div>
+    </div>
+    
+    <script>
+        function openLightbox(src, text) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-text').innerText = text;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

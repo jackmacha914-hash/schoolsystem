@@ -1,0 +1,5 @@
+{
+  "jwtSecret": "7f2f0c1248cf892164e619b209a43a20248586eabc19834e69d73c808082e0af",
+  "mongoURI": "mongodb://localhost:27017/SW",
+  "port": 5000
+}

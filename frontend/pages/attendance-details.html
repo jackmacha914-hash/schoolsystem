@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Details - School Management System</title>
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" 
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .attendance-details {
+            margin-top: 2rem;
+        }
+        .attendance-summary {
+            margin-bottom: 2rem;
+        }
+        .attendance-record {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .attendance-record h4 {
+            margin-bottom: 1rem;
+        }
+        .attendance-record .summary-card {
+            margin-bottom: 1rem;
+        }
+        .attendance-record .summary-card h5 {
+            margin-bottom: 0.5rem;
+        }
+        .attendance-record .student-list {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="loading-spinner" class="text-center mt-5" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading attendance details...</p>
+        </div>
+        
+        <div id="error-message" class="alert alert-danger" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-text">An error occurred while loading attendance details</span>
+        </div>
+        
+        <div class="attendance-details" style="display: none;">
+            <div class="attendance-summary">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="summary-card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Date</h5>
+                                <h3 id="attendance-date">Loading...</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Class</h5>
+                                <h3 id="attendance-class">Loading...</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Teacher</h5>
+                                <h3 id="attendance-teacher">Loading...</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="attendance-record" class="attendance-record">
+                <h4>Attendance Details</h4>
+                <div class="summary-card">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Present</h5>
+                                    <h2 id="attendance-present">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Absent</h5>
+                                    <h2 id="attendance-absent">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total</h5>
+                                    <h2 id="attendance-total">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="student-list">
+                    <div class="student-list">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-records">
+                            <!-- Student records will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" 
+            crossorigin="anonymous"></script>
+    <script src="../js/attendance-details.js"></script>
+</body>
+</html>

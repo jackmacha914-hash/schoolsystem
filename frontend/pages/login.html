@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - School Management</title>
+    <link rel="stylesheet" type="text/css" href="../css/login.css">
+</head>
+<body>
+    <a href="about.html" class="about-btn"><i class="fas fa-info-circle"></i> About</a>
+
+    <div class="form-container">
+        <h2 id="form-title">Login</h2>
+        
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="input-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" id="login-btn">Login</button>
+            <p id="toggle-form">Don't have an account? <a href="#" id="show-register">Register</a></p>
+            <div id="error-message" class="error-message"></div>
+        </form>
+
+        <!-- Registration Form (initially hidden) -->
+        <form id="register-form" style="display: none;">
+            <div class="input-group">
+                <label for="register-name">Full Name:</label>
+                <input type="text" id="register-name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="register-email">Email:</label>
+                <input type="email" id="register-email" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="register-password">Password:</label>
+                <input type="password" id="register-password" placeholder="Create a password" required>
+            </div>
+
+            <div class="input-group">
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+            </div>
+
+            <div class="input-group">
+                <label for="role">Role:</label>
+                <select id="role" required>
+                    <option value="">Select your role</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="parent">Parent</option>
+                </select>
+            </div>
+
+            <!-- Class selection (initially hidden, shown only for students) -->
+            <div class="input-group" id="class-group" style="display: none;">
+                <label for="class">Class:</label>
+                <select id="class" required>
+                    <option value="">Select your class</option>
+                    <option value="Class 1A">Class 1A</option>
+                    <option value="Class 1B">Class 1B</option>
+                    <option value="Class 2A">Class 2A</option>
+                    <option value="Class 2B">Class 2B</option>
+                    <option value="Class 3A">Class 3A</option>
+                    <option value="Class 3B">Class 3B</option>
+                    <option value="Class 4A">Class 4A</option>
+                    <option value="Class 4B">Class 4B</option>
+                    <option value="Class 5A">Class 5A</option>
+                    <option value="Class 5B">Class 5B</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" id="register-btn" class="btn-primary">Create Account</button>
+                <button type="button" id="show-login" class="btn-secondary">Back to Login</button>
+            </div>
+            <div id="register-message" class="error-message"></div>
+        </form>
+    </div>
+
+    <script type="module" src="../js/login.js"></script> <!-- if login.html is inside another subfolder -->
+    <script type="module" src="../js/utils/auth.js"></script>
+
+</body>
+</html>

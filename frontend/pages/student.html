@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link rel="stylesheet" type="text/css" href="../css/report-cards.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- jsPDF Library for report downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Homework Submission Modal -->
+  <div id="submissionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h3 class="modal-title">Submit Homework</h3>
+      
+      <form id="submissionForm" enctype="multipart/form-data">
+        <input type="hidden" id="homeworkId" name="homeworkId">
+        
+        <div class="form-group">
+          <label for="submissionFile">Upload your work (PDF, DOC, DOCX, or images)</label>
+          <input type="file" class="form-control" id="submissionFile" name="submission-file" required>
+          <small class="form-text text-muted">Max file size: 5MB</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="comments">Additional Comments (Optional)</label>
+          <textarea class="form-control" id="comments" name="comments" rows="3" placeholder="Any additional notes for your teacher..."></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-upload"></i> Submit
+          </button>
+          <button type="button" class="btn btn-outline-secondary close-modal-btn">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</head>
+
+<body>
+  <button class="sidebar-toggle" aria-label="Toggle sidebar">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <h2>SchoolSync</h2>
+    </div>
+    <div class="sidebar-profile">
+      <div class="profile-avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">Student</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <ul class="sidebar-menu">
+      <li class="tab-link active" data-tab="dashboard-section">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </li>
+      <li class="tab-link" data-tab="profile-section">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </li>
+      <li class="tab-link" data-tab="calendar-section">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Academic Calendar</span>
+      </li>
+      <li class="tab-link" data-tab="announcements-section">
+        <i class="fas fa-bullhorn"></i>
+        <span>Announcements</span>
+      </li>
+      <li class="tab-link" data-tab="assignments-section">
+        <i class="fas fa-tasks"></i>
+        <span>Assignments</span>
+      </li>
+      <li class="tab-link" data-tab="homework-section">
+        <i class="fas fa-book-reader"></i>
+        <span>Homework</span>
+      </li>
+      <li class="tab-link" data-tab="resources-section">
+        <i class="fas fa-book"></i>
+        <span>Resources</span>
+      </li>
+      <li class="tab-link" data-tab="quizzes-section" onclick="window.location.href='quizzes.html'">
+        <i class="fas fa-question-circle"></i>
+        <span>Quizzes</span>
+      </li>
+      <li class="tab-link" data-tab="fee-records-section">
+        <i class="fas fa-money-bill-wave"></i>
+        <span>Fee Records</span>
+      </li>
+      <li class="tab-link" data-tab="library-section">
+        <i class="fas fa-book-reader"></i>
+        <span>Library</span>
+      </li>
+      <li class="tab-link" data-tab="report-cards-section">
+        <i class="fas fa-file-alt"></i>
+        <span>Report Cards</span>
+      </li>
+      <li class="tab-link" data-tab="logout-section" onclick="window.location.href='http://localhost:8000/pages/login'">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header>
+      <h1>Welcome, Student</h1>
+    </header>
+    
+    <!-- Message container for displaying feedback to the user -->
+    <div id="message" class="alert alert-dismissible fade show" style="display: none; margin: 1rem;" role="alert">
+      <span id="message-text"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Profile Information Section -->
+    <section id="profile-section" class="tab-section">
+      <h2>Profile Information</h2>
+      <div class="profile-card">
+        <!-- Profile Photo -->
+        <div class="profile-photo-container">
+          <img id="profile-photo" src="student-photo.jpg" alt="Profile Photo" class="profile-photo">
+          <input type="file" id="photo-upload" accept="image/*" style="display: none;">
+          <button id="change-photo-btn">Change Photo</button>
+        </div>
+
+        <!-- Profile Information Form -->
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="student-name">Full Name</label>
+            <input type="text" id="student-name" value="John Doe" data-student-id="12345" required>
+          </div>
+          <div class="form-group">
+            <label for="student-grade">Grade</label>
+            <input type="text" id="student-grade" value="10" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-student-class">Class</label>
+            <input type="text" id="profile-student-class" value="4" required>
+          </div>
+          <div class="form-group">
+            <label for="student-email">Email</label>
+            <input type="email" id="student-email" value="johndoe@example.com" required>
+          </div>
+          <button type="submit" id="save-profile-btn">Save Changes</button>
+        </form>
+
+        <!-- Change Password Form -->
+        <h3>Change Password</h3>
+        <form id="password-form">
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input type="password" id="current-password" required>
+          </div>
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" required>
+          </div>
+          <button type="submit" id="change-password-btn">Change Password</button>
+        </form>
+
+        <div id="message" class="message" style="display: none;"></div>
+      </div>
+    </section>
+
+    <!-- Homework Section -->
+    <section id="homework-section" class="tab-section">
+      <div class="section-header">
+        <h2><i class="bi bi-journal-text"></i> My Homeworks</h2>
+        <div class="section-actions">
+          <button class="btn btn-outline-secondary" onclick="fetchHomeworks()" title="Refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="homework-container">
+        <div class="homework-list" id="homework-list">
+          <!-- Homework items will be dynamically added here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Academic Calendar Section -->
+    <section id="calendar-section" class="tab-section">
+      <h2>Academic Calendar & Class Schedule</h2>
+      <div id="calendar">
+        <p><strong>Upcoming Classes:</strong></p>
+        <ul id="class-schedule">
+          <li>Math - 9:00 AM, Feb 19</li>
+          <li>Science - 11:00 AM, Feb 20</li>
+          <li>History - 2:00 PM, Feb 21</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Announcements Section -->
+    <section id="announcements-section" class="tab-section">
+      <h2>Announcements & Notifications</h2>
+      <div id="announcements">
+        <ul>
+          <li><strong>New Homework Assignment:</strong> Complete Math Exercise 5 by Feb 25</li>
+          <li><strong>School Event:</strong> Science Fair on Mar 1</li>
+          <li><strong>Reminder:</strong> Parent-Teacher Meeting on Mar 10</li>
+        </ul>
+      </div>
+    </section>
+
+   <!-- Assignments Section -->
+<section id="assignments-section" class="tab-section">
+  <h2>Assignments</h2>
+  <div id="assignments">
+    <!-- Updated with the correct ID for assignment list -->
+    <ul id="assignment-list">
+      <!-- Assignments will be dynamically inserted here -->
+    </ul>
+  </div>
+
+  <!-- Assignment Details Modal -->
+  <div id="assignment-details-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h3 id="assignment-name"></h3>
+      <p id="assignment-description"></p>
+      <label for="file-upload">Upload your assignment:</label>
+      <input type="file" id="file-upload" accept="application/pdf,image/*">
+      <button id="submit-assignment-btn">Submit Assignment</button>
+      <p id="upload-message" style="color: green;"></p>
+    </div>
+  </div>
+</section>
+
+
+    
+    <!-- Fee Records Section -->
+    <section id="fee-records-section" class="tab-section">
+      <div class="container mt-4">
+        <h2>Fee Payment Records</h2>
+        
+        <!-- Loading Indicator -->
+        <div id="fees-loading" class="text-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Loading fee records...</p>
+        </div>
+        
+        <!-- No Fees Message -->
+        <div id="no-fees" class="text-center my-5" style="display: none;">
+          <i class="bi bi-receipt-cutoff" style="font-size: 3rem; color: #6c757d;"></i>
+          <h4 class="mt-3">No Fee Records Found</h4>
+          <p class="text-muted">You don't have any fee records at the moment.</p>
+        </div>
+        
+        <!-- Fees Table -->
+        <div class="table-responsive">
+          <table id="fees-table" class="table table-striped table-hover" style="display: none;">
+            <thead class="table-light">
+              <tr>
+                <th>Fee Type</th>
+                <th>Academic Year</th>
+                <th>Term</th>
+                <th class="text-end">Total Amount</th>
+                <th class="text-end">Paid Amount</th>
+                <th class="text-end">Balance</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="fees-table-body">
+              <!-- Fee records will be dynamically inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Resources Section -->
+    <section id="resources-section" class="tab-section">
+      <div id="resources-list">
+        <h3>Available Resources</h3>
+        <ul id="resource-list"></ul> <!-- Dynamically populated with available resources -->
+      </div>
+    </section>
+
+    <!-- Fee Payment Records Section -->
+    <section id="extracurricular-section" class="tab-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Fee Payment Records</h2>
+        <button id="refresh-fees" class="btn btn-primary">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+      </div>
+      
+      <!-- Loading State -->
+      <div id="fees-loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading your fee records...</p>
+      </div>
+      
+      <!-- No Records State -->
+      <div id="no-fees" class="text-center py-5" style="display: none;">
+        <i class="bi bi-credit-card" style="font-size: 3rem; color: #6c757d;"></i>
+        <h4 class="mt-3">No Fee Records Found</h4>
+        <p class="text-muted">You don't have any fee records yet.</p>
+      </div>
+      
+      <!-- Fee Records Table -->
+      <div class="table-responsive">
+        <table class="table table-hover" id="fees-table" style="display: none;">
+          <thead class="table-light">
+            <tr>
+              <th>Fee Type</th>
+              <th>Academic Year</th>
+              <th>Term</th>
+              <th class="text-end">Amount</th>
+              <th class="text-end">Paid</th>
+              <th class="text-end">Balance</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fees-table-body">
+            <!-- Fee records will be populated here -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Custom Payment History Modal -->
+      <div id="customPaymentModal" class="custom-modal" style="display: none;">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h5 id="customPaymentModalLabel">Payment History</h5>
+            <span class="custom-close">&times;</span>
+          </div>
+          <div class="custom-modal-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reference</th>
+                    <th>Method</th>
+                    <th class="text-end">Amount</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="payment-history-body">
+                  <!-- Payment history will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button type="button" class="btn btn-secondary" id="closeCustomModal">Close</button>
+          </div>
+        </div>
+      </div>
+      
+      <style>
+        .custom-modal {
+          display: none;
+          position: fixed;
+          z-index: 9999;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.7);
+          overflow-y: auto;
+        }
+        
+        .custom-modal-content {
+          background-color: #fff;
+          margin: 5% auto;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 800px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+        }
+        
+        .custom-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 15px;
+          border-bottom: 1px solid #ddd;
+          margin-bottom: 15px;
+        }
+        
+        .custom-close {
+          font-size: 28px;
+          font-weight: bold;
+          cursor: pointer;
+          color: #666;
+        }
+        
+        .custom-close:hover {
+          color: #000;
+        }
+        
+        .custom-modal-body {
+          margin-bottom: 20px;
+        }
+        
+        .custom-modal-footer {
+          text-align: right;
+          padding-top: 15px;
+          border-top: 1px solid #ddd;
+        }
+        
+        .custom-modal.show {
+          display: block;
+        }
+      </style>
+    </section>
+
+    <!-- Communication Section -->
+    <section id="communication-section" class="tab-section">
+      <h2>Communication</h2>
+      <div id="communication">
+        <ul>
+          <li><strong>Teacher Message:</strong> Don’t forget to bring your lab materials tomorrow.</li>
+          <li><strong>Parent-Teacher Conference:</strong> Scheduled for March 10 at 3:00 PM.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Library Section -->
+    <section id="library-section" class="tab-section">
+      <div class="section-header">
+        <h2><i class="bi bi-book"></i> My Library</h2>
+        <div class="section-actions">
+          <button class="btn btn-outline-secondary" onclick="fetchMyIssuedBooks()" title="Refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Book Title</th>
+              <th>Author</th>
+              <th>Issued Date</th>
+              <th>Due Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="my-books-list">
+            <!-- Books will be loaded here -->
+            <tr>
+              <td colspan="5" class="text-center">Loading your books...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Report Cards Section -->
+    <section id="report-cards-section" class="tab-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Report Cards</h2>
+        <div class="d-flex gap-2">
+          <div class="input-group" style="width: 200px;">
+            <label class="input-group-text" for="academic-year-select">Year</label>
+            <select class="form-select" id="academic-year-select">
+              <!-- Will be populated by JavaScript -->
+            </select>
+          </div>
+          <div class="input-group" style="width: 150px;">
+            <label class="input-group-text" for="term-select">Term</label>
+            <select class="form-select" id="term-select">
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <button id="refresh-report-cards" class="btn btn-primary">
+            <i class="bi bi-search"></i> View
+          </button>
+        </div>
+      </div>
+      
+      <!-- Loading State -->
+      <div id="report-cards-loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading your report cards...</p>
+      </div>
+      
+      <!-- Empty State -->
+      <div id="no-report-cards" class="text-center py-5" style="display: none;">
+        <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #6c757d;"></i>
+        <h4 class="mt-3">No Report Cards Available</h4>
+        <p class="text-muted">You don't have any report cards for the selected criteria.</p>
+      </div>
+      
+      <!-- Report Cards Grid -->
+      <div id="report-cards-grid" class="row g-4">
+        <!-- Report cards will be inserted here by JavaScript -->
+      </div>
+      
+      <!-- Report Card Preview Modal -->
+      <div class="modal fade" id="reportCardModal" tabindex="-1" aria-labelledby="reportCardModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="reportCardModalLabel">Report Card</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="report-card-preview">
+              <div class="report-card">
+                <div class="report-header text-center mb-4">
+                  <h3>Student Report Card</h3>
+                  <div class="student-info">
+                    <p class="mb-1"><strong>Name:</strong> <span id="student-name"></span></p>
+                    <p class="mb-1"><strong>Class:</strong> <span id="student-class"></span></p>
+                    <p class="mb-1"><strong>Term:</strong> <span id="term-display"></span></p>
+                    <p class="mb-1"><strong>Academic Year:</strong> <span id="academic-year-display"></span></p>
+                  </div>
+                </div>
+                
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Subject</th>
+                        <th class="text-center">Score</th>
+                        <th class="text-center">Grade</th>
+                        <th class="text-center">Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody id="marks-table-body">
+                      <!-- Marks will be populated here -->
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div class="report-summary mt-4 p-3 bg-light rounded">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <p><strong>Total Score:</strong> <span id="total-marks">0</span></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>Average Score:</strong> <span id="average-score">0</span></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>Overall Grade:</strong> <span id="overall-grade">-</span></p>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <p class="mb-1"><strong>Teacher's Remarks:</strong></p>
+                    <p id="teacher-remarks">No remarks available</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="download-report-card">
+                <i class="bi bi-download me-1"></i> Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logout Section -->
+    <section id="logout-section" class="tab-section">
+      <h2>You are logged out!</h2>
+      <button onclick="window.location.href='login.html'">Go to Login Page</button>
+    </section>
+  </main>
+
+  <!-- Report Card Details Modal -->
+  <div id="report-card-details" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <span class="close-modal">&times;</span>
+      <div id="report-card-content" class="p-4">
+        <!-- Report card details will be loaded here -->
+      </div>
+      <div class="modal-buttons text-center p-3 border-top">
+        <button id="print-report-card" class="btn btn-primary me-2">
+          <i class="bi bi-printer me-1"></i> Print
+        </button>
+        <button class="btn btn-outline-secondary close-modal-btn">
+          <i class="bi bi-x-lg me-1"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add this style for the modal -->
+<style>
+  /* Sidebar Styles */
+  :root {
+    --primary-color: #4f46e5;
+    --primary-light: #818cf8;
+    --primary-dark: #4338ca;
+    --bg-color: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --sidebar-bg: #1e3a8a;
+    --sidebar-text: #e5e7eb;
+    --sidebar-hover: #3b82f6;
+    --sidebar-active: #60a5fa;
+  }
+
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 1rem 0;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+  }
+
+  .logo-icon i {
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .sidebar-logo h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+  }
+
+  .profile-avatar i {
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-role {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .tab-link i {
+    width: 24px;
+    margin-right: 0.75rem;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .tab-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .tab-link.active {
+    background-color: var(--sidebar-active);
+    color: white;
+    border-left: 3px solid white;
+  }
+
+  .sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 1100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Main Content */
+  .main-content {
+    margin-left: 250px;
+    padding: 2rem;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    transition: margin-left 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    
+    .main-content {
+      margin-left: 0;
+    }
+    
+    .sidebar-toggle {
+      display: block;
+    }
+  }
+
+  /* Homework Section Styles */
+  .homework-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #4a90e2;
+  }
+  
+  .homework-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .homework-card.past-due {
+    border-left-color: #dc3545;
+  }
+  
+  .homework-card.submitted {
+    border-left-color: #28a745;
+  }
+  
+  .homework-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .homework-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.25rem;
+  }
+  
+  .due-date {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .due-date.overdue {
+    color: #dc3545;
+    font-weight: 500;
+  }
+  
+  .due-date i {
+    margin-right: 5px;
+  }
+  
+  .homework-details {
+    padding: 20px;
+  }
+  
+  .description {
+    color: #495057;
+    margin-bottom: 15px;
+    line-height: 1.6;
+  }
+  
+  .homework-file {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+  }
+  
+  .homework-file i {
+    margin-right: 10px;
+    color: #4a90e2;
+  }
+  
+  .file-link {
+    color: #4a90e2;
+    text-decoration: none;
+  }
+  
+  .file-link:hover {
+    text-decoration: underline;
+  }
+  
+  .submission-status {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .status-badge i {
+    margin-right: 5px;
+  }
+  
+  .status-badge.submitted {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .status-badge.not-submitted {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .grade-badge {
+    margin-left: 8px;
+    background-color: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .teacher-comments {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .teacher-comments p {
+    margin: 5px 0 0;
+    color: #495057;
+  }
+  
+  .homework-actions {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 20px;
+  }
+  
+  .homework-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4a90e2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .error-message {
+    text-align: center;
+    padding: 30px 20px;
+    color: #dc3545;
+  }
+  
+  .error-message i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    display: block;
+  }
+  
+  .retry-btn {
+    margin-top: 15px;
+    padding: 5px 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .retry-btn:hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Modal styles */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+    z-index: 1050;
+    overflow-y: auto;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .modal-title {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    padding: 20px 20px 0;
+    font-size: 1.5rem;
+  }
+  
+  .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.8rem;
+    color: #6c757d;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+    padding: 0;
+  }
+  
+  .close-modal:hover {
+    color: #343a40;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    padding: 0 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    margin-top: 20px;
+  }
+  
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+  
+  .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background-color: transparent;
+  }
+  
+  .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border: 2px solid #4a90e2;
+    border-radius: 12px;
+    max-width: 90%;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    margin: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease-out;
+  }
+  
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .close-modal:hover {
+    color: #000;
+  }
+  
+  .modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .marks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .mark-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Make the select element more visible */
+  #student-select {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-size: 1.1rem;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #1a1a1a;
+    transition: all 0.2s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234a90e2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+  }
+  
+  #student-select:focus {
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 0.25rem rgba(44, 123, 229, 0.25);
+    outline: none;
+  }
+  
+  #student-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  #student-select:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+  }
+
+  .close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close-btn:hover,
+  .close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn:hover {
+    opacity: 0.9;
+  }
+  
+  /* Report Card Styles */
+  .report-card {
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .report-header {
+    padding: 20px 0;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 20px;
+  }
+  
+  .report-header h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+  }
+  
+  .student-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+  }
+  
+  .report-summary {
+    margin-top: 20px;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+  }
+  
+  /* Ensure tables are properly formatted for printing */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #report-card-preview, #report-card-preview * {
+      visibility: visible;
+    }
+    #report-card-preview {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    .modal-footer {
+      display: none !important;
+    }
+  }
+</style>
+
+<!-- Bootstrap JS is already loaded in the head section -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const mainContent = document.querySelector('.main-content');
+
+    // Toggle sidebar on button click
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            // Toggle a class on the body to handle overlay if needed
+            document.body.classList.toggle('sidebar-active');
+        });
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        const isClickInside = sidebar.contains(event.target) || 
+                            (sidebarToggle && sidebarToggle.contains(event.target));
+        
+        if (!isClickInside && window.innerWidth <= 1024) {
+            sidebar.classList.remove('active');
+            document.body.classList.remove('sidebar-active');
+        }
+    });
+
+    // Tab switching functionality
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabSections = document.querySelectorAll('.tab-section');
+
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all links
+            tabLinks.forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Hide all sections
+            tabSections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(targetTab);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Close sidebar on mobile after clicking a link
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('active');
+                document.body.classList.remove('sidebar-active');
+            }
+        });
+    });
+
+    // Show dashboard by default
+    const defaultTab = document.querySelector('.tab-link.active');
+    if (defaultTab) {
+        defaultTab.click();
+    }
+});
+</script>
+
+<!-- Report Cards must be loaded before student.js -->
+<script src="../js/student-report-cards-fixed.js"></script>
+
+
+
+<!-- Core scripts -->
+<script src="../js/student.js"></script>
+<script src="../js/report-cards.js"></script>
+
+<!-- Feature scripts -->
+<script src="../js/assignments.js"></script>
+<script src="../js/announcements.js"></script>
+<script src="../js/calendar.js"></script>
+<script src="../js/resources.js"></script>
+<script type="module" src="../js/student-library.js"></script>
+
+<!-- Debug Script -->
+<script>
+// This is a temporary debug script to help diagnose modal issues
+console.log('=== TEMPORARY DEBUG SCRIPT ===');
+
+// Check if modal exists in DOM
+const modal = document.getElementById('customPaymentModal');
+console.log('Modal element in DOM:', !!modal);
+
+// Check if modal is visible
+if (modal) {
+    console.log('Modal display style:', window.getComputedStyle(modal).display);
+    console.log('Modal visibility:', window.getComputedStyle(modal).visibility);
+    console.log('Modal z-index:', window.getComputedStyle(modal).zIndex);
+    
+    // Make modal visible for testing
+    modal.style.display = 'flex';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+    modal.style.zIndex = '9999';
+    
+    // Add a red border to make it visible
+    modal.style.border = '5px solid red';
+    
+    console.log('Modal should now be visible with a red border');
+} else {
+    console.error('❌ Modal not found in DOM!');
+    console.log('Available elements with id containing "modal":', 
+        Array.from(document.querySelectorAll('[id*="modal"]')).map(el => ({
+            id: el.id,
+            class: el.className,
+            tag: el.tagName
+        }))
+    );
+}
+</script>
+
+<!-- Feature scripts -->
+<script src="../js/assignments.js"></script>
+<script src="../js/announcements.js"></script>
+<script src="../js/calendar.js"></script>
+<script src="../js/resources.js"></script>
+<script src="../js/attendance.js"></script>
+<script src="../js/extracurricular.js"></script>
+<script src="../js/communication.js"></script>
+
+<!-- Custom Payment History Modal -->
+<div id="customPaymentModal" class="custom-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+  <div class="custom-modal-content" style="background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; position: relative;">
+    <div class="custom-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+      <h3 class="custom-modal-title" style="margin: 0;">Payment History</h3>
+      <span class="custom-close" style="font-size: 24px; cursor: pointer; font-weight: bold;">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div class="table-responsive">
+        <table class="table" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
+              <th style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">Amount</th>
+              <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Payment Method</th>
+              <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Reference</th>
+              <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="paymentHistoryBody" style="display: table-row-group;">
+            <!-- Payment history will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="custom-modal-footer" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; text-align: right;">
+      <button type="button" class="btn btn-secondary" id="closePaymentModal" style="padding: 5px 15px; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

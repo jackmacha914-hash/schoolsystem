@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Authentication</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+        .container { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 10px 0; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Authentication Status</h2>
+        <div id="status">Checking authentication status...</div>
+        <button onclick="clearAuth()">Clear Authentication</button>
+        <button onclick="location.reload()">Refresh</button>
+        <h3>Current localStorage:</h3>
+        <pre id="storage"></pre>
+    </div>
+
+    <script>
+        // Display current storage
+        function updateStorageDisplay() {
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                storage[key] = localStorage.getItem(key);
+            }
+            document.getElementById('storage').textContent = JSON.stringify(storage, null, 2);
+            
+            // Update status
+            const status = document.getElementById('status');
+            if (localStorage.getItem('token')) {
+                status.innerHTML = '<span style="color: green">Token found in localStorage</span>';
+            } else {
+                status.innerHTML = '<span style="color: red">No token found in localStorage</span>';
+            }
+        }
+
+        // Clear authentication data
+        function clearAuth() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userData');
+            updateStorageDisplay();
+            alert('Authentication data cleared. Please log in again.');
+            // Redirect to login page if not already there
+            if (!window.location.href.includes('login.html')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Initialize
+        updateStorageDisplay();
+    </script>
+</body>
+</html>

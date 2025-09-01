@@ -1,0 +1,119 @@
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.schedule-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.schedule-group select,
+.schedule-group input {
+    flex: 1;
+}
+
+#classesList {
+    margin-top: 20px;
+}
+
+.class-item {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.class-item h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.class-item .actions {
+    display: flex;
+    gap: 10px;
+}
+
+.class-item .actions button {
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.class-item .actions button:hover {
+    opacity: 0.9;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    margin: 50px auto;
+    position: relative;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#studentsList {
+    margin-top: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.student-item {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-item input[type="checkbox"] {
+    margin-right: 10px;
+}

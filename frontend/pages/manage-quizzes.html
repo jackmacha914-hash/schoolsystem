@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Quizzes - School Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/quiz-management.css">
+    <style>
+        /* Additional custom styles specific to this page */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .page-title {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.75rem;
+        }
+        
+        .btn-create-quiz {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            margin: 1rem 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .quiz-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .quiz-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-edit {
+            background-color: #2196F3;
+            color: white;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-published {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-draft {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>SchoolMS</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="manage-quizzes.html" class="active"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                <!-- Add other navigation links as needed -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Manage Quizzes</h1>
+                <div class="user-info">
+                    <span id="username">Teacher</span>
+                    <img src="../images/avatar.png" alt="User" class="avatar">
+                </div>
+            </header>
+
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-tasks"></i> Manage Quizzes
+                    </h1>
+                    <button id="createQuizBtn" class="btn btn-primary btn-create-quiz">
+                        <i class="fas fa-plus-circle"></i> Create New Quiz
+                    </button>
+                </div>
+                
+                <div id="quizzesList">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading quizzes...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Quiz Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title">
+                    <i class="fas fa-plus-circle"></i> Create New Quiz
+                </h2>
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="quizForm">
+                    <input type="hidden" id="quizId">
+                    
+                    <div class="form-group">
+                        <label for="quizTitle">
+                            <i class="fas fa-heading"></i> Quiz Title
+                        </label>
+                        <input type="text" id="quizTitle" class="form-control" required 
+                               placeholder="Enter quiz title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quizClass">
+                            <i class="fas fa-users"></i> Class
+                        </label>
+                        <select id="quizClass" class="form-control" required>
+                            <option value="">Select Class</option>
+                            <optgroup label="Primary School">
+                                <option value="Grade 1">Grade 1</option>
+                                <option value="Grade 2">Grade 2</option>
+                                <option value="Grade 3">Grade 3</option>
+                                <option value="Grade 4">Grade 4</option>
+                                <option value="Grade 5">Grade 5</option>
+                                <option value="Grade 6">Grade 6</option>
+                                <option value="Grade 7">Grade 7</option>
+                                <option value="Grade 8">Grade 8</option>
+                            </optgroup>
+                            <optgroup label="Secondary School">
+                                <option value="Form 1">Form 1</option>
+                                <option value="Form 2">Form 2</option>
+                                <option value="Form 3">Form 3</option>
+                                <option value="Form 4">Form 4</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quizSubject">
+                            <i class="fas fa-book"></i> Subject
+                        </label>
+                        <select id="quizSubject" class="form-control" required>
+                            <option value="">Select Subject</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="English">English</option>
+                            <option value="Kiswahili">Kiswahili</option>
+                            <option value="Science">Science</option>
+                            <option value="Social Studies">Social Studies</option>
+                            <option value="CRE">CRE</option>
+                            <option value="IRE">IRE</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Business Studies">Business Studies</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Home Science">Home Science</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Arabic">Arabic</option>
+                            <option value="Music">Music</option>
+                            <option value="Art and Design">Art and Design</option>
+                            <option value="Physical Education">Physical Education</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeLimit">
+                            <i class="far fa-clock"></i> Time Limit (minutes, optional)
+                        </label>
+                        <input type="number" id="timeLimit" class="form-control" 
+                               min="1" placeholder="e.g., 30">
+                        <small class="text-muted">Leave empty for no time limit</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="mb-0">
+                                <i class="far fa-question-circle"></i> Questions
+                            </label>
+                            <button type="button" id="addQuestionBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus"></i> Add Question
+                            </button>
+                        </div>
+                        
+                        <div id="questionsContainer">
+                            <!-- Questions will be added here dynamically -->
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                No questions added yet. Click "Add Question" to get started.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Quiz
+                        </button>
+                        <button type="button" id="cancelBtn" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="../js/quiz-management.js"></script>
+</body>
+</html>

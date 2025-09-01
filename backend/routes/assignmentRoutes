@@ -1,0 +1,19 @@
+const express = require('express');
+const { authenticateUser, authorizeRoles } = require('../middleware/authMiddleware');
+const { createAssignment, getAssignments, updateAssignment, deleteAssignment } = require('../controllers/assignmentController');
+
+const router = express.Router();
+
+// Create Assignment (Only for Teachers)
+router.post('/', authenticateUser, authorizeRoles('Teacher'), createAssignment);
+
+// Get All Assignments (Students & Teachers)
+router.get('/', authenticateUser, getAssignments);
+
+// Update Assignment (Only for Teachers)
+router.put('/:id', authenticateUser, authorizeRoles('Teacher'), updateAssignment);
+
+// Delete Assignment (Only for Teachers)
+router.delete('/:id', authenticateUser, authorizeRoles('Teacher'), deleteAssignment);
+
+module.exports = router;

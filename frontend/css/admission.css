@@ -1,0 +1,104 @@
+/* Admissions Form */
+.admissions-form {
+  background-color: #ffffff;
+  padding: 60px 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  max-width: 900px;
+  margin: 60px auto;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.admissions-form .section-title {
+  font-size: 32px;
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #003366;
+}
+
+.admissions-form .section-intro {
+  font-size: 18px;
+  margin-bottom: 40px;
+  color: #666;
+}
+
+.admissions-form .form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.admissions-form .form-group {
+  text-align: left;
+}
+
+.admissions-form .form-group label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #003366;
+  margin-bottom: 8px;
+}
+
+.admissions-form .form-group input,
+.admissions-form .form-group select,
+.admissions-form .form-group textarea {
+  padding: 16px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.admissions-form .form-group input:focus,
+.admissions-form .form-group select:focus,
+.admissions-form .form-group textarea:focus {
+  border-color: #003366;
+  box-shadow: 0 0 5px rgba(0, 51, 102, 0.3);
+  outline: none;
+}
+
+.admissions-form .form-group textarea {
+  resize: vertical;
+}
+
+.admissions-form .form-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.admissions-form .btn-primary {
+  padding: 18px 40px;
+  font-size: 18px;
+  color: white;
+  background-color: #003366;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s ease-in-out;
+}
+
+.admissions-form .btn-primary:hover {
+  background-color: #ffcc00;
+  color: #003366;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .admissions-form .form-group input,
+  .admissions-form .form-group select,
+  .admissions-form .form-group textarea {
+    font-size: 14px;
+    padding: 14px;
+  }
+
+  .admissions-form .btn-primary {
+    font-size: 16px;
+    padding: 15px 30px;
+  }
+}

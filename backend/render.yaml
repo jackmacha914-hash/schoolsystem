@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: school-management-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        fromDatabase:
+          name: school-db
+          property: jwtSecret
+      - key: MONGO_URI
+        fromDatabase:
+          name: school-db
+          property: connectionString
+    healthCheckPath: /api/health
+    plan: free

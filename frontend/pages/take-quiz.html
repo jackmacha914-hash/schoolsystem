@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz - School Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/quiz-interface.css">
+    <link rel="stylesheet" href="../css/quiz-results.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .quiz-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .quiz-timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        .question-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .options-container {
+            margin-left: 20px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+        .option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 30px auto 0;
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-complete {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #2e7d32;
+        }
+        .back-to-quizzes {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .back-to-quizzes:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>SchoolMS</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="quizzes.html" class="active"><i class="fas fa-question-circle"></i> My Quizzes</a></li>
+                <!-- Add other navigation links as needed -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Quiz Container -->
+            <div class="quiz-container">
+                <!-- Quiz Header -->
+                <header class="quiz-header">
+                    <h1 class="quiz-title" id="quizTitle">Loading Quiz...</h1>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div id="quizProgressBar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">0/0 questions answered</div>
+                    </div>
+                    <div class="quiz-meta">
+                        <div class="quiz-timer">
+                            <i class="fas fa-clock"></i> Time Remaining: <span id="quizTimer">--:--</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <!-- Main Quiz Content -->
+                <div id="quizContent" class="quiz-content">
+                    <!-- Question Indicators -->
+                    <div class="question-indicators" id="questionIndicators">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Questions Container -->
+                    <div id="questionsList" class="questions-container">
+                        <div class="question-card">
+                            <div class="loading" style="text-align: center; padding: 2rem;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                                <p>Loading quiz questions...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="quiz-navigation">
+                        <button id="prevQuestion" class="btn btn-outline" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <div>
+                            <button id="nextQuestion" class="btn btn-primary">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button id="submitQuiz" class="btn btn-danger" style="display: none; margin-left: 1rem; background: var(--danger-color);">
+                                <i class="fas fa-check"></i> Submit Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Results (initially hidden) -->
+                <div id="quizResults" class="quiz-results">
+                    <h2>Quiz Results</h2>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span id="score">0</span>
+                            <small>out of <span id="totalQuestions">0</span></small>
+                        </div>
+                    </div>
+                    <div id="resultsDetails" class="results-details"></div>
+                    <button onclick="window.location.href='quizzes.html'" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back to Quizzes
+                    </button>
+                </div>
+            </div>
+            
+            </div>
+            
+            <!-- Confirmation Modal -->
+            <!-- Submit Confirmation Modal -->
+            <div id="submitConfirmationModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+                <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                        <h3 style="margin: 0; color: #2b2d42; font-size: 1.5rem;"><i class="fas fa-exclamation-triangle" style="color: #f39c12; margin-right: 10px;"></i> Submit Quiz</h3>
+                        <span class="close-modal" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                    </div>
+                    <div class="modal-body" style="padding: 10px 0;">
+                        <p style="margin-bottom: 20px;">Are you sure you want to submit your quiz? You won't be able to make changes after submission.</p>
+                        <div class="answer-summary" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                            <p style="margin: 5px 0; font-size: 0.95rem;"><strong>Answered:</strong> <span id="answeredCount" style="color: #2ecc71; font-weight: 600;">0</span> / <span id="totalQuestions">0</span></p>
+                            <p style="margin: 5px 0; font-size: 0.95rem;"><strong>Unanswered:</strong> <span id="unansweredCount" style="color: #e74c3c; font-weight: 600;">0</span></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                        <button id="cancelSubmitBtn" class="btn btn-outline" style="padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+                            Cancel
+                        </button>
+                        <button id="confirmSubmitBtn" class="btn btn-danger" style="padding: 8px 20px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+                            <i class="fas fa-check"></i> Submit Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column;">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; margin-bottom: 1rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 style="margin: 0; color: #2b2d42;">Submitting your quiz...</h5>
+                <p style="color: #6c757d; margin-top: 0.5rem;">Please wait while we process your answers</p>
+            </div>
+            
+            <!-- Floating Navigation -->
+            <div class="floating-nav" id="floatingNav">
+                <button class="floating-nav-btn" id="floatingPrevBtn" title="Previous Question">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="floating-nav-indicator" id="floatingNavIndicator">1/10</span>
+                <button class="floating-nav-btn" id="floatingNextBtn" title="Next Question">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="floating-nav-btn floating-submit-btn" id="floatingSubmitBtn" title="Submit Quiz">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/take-quiz.js"></script>
+</body>
+</html>

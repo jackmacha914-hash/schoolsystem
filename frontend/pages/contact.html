@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | School Name</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Merriweather:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">School Name</div>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="academics.html">Academics</a></li>
+        <li><a href="admissions.html">Admissions</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero contact-hero" data-aos="fade-up">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1>Contact Us</h1>
+        <p>Get in touch with us to learn more about our programs, admissions, or general inquiries.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" data-aos="fade-up">
+    <div class="container">
+      <h2 class="section-title">We'd Love to Hear From You!</h2>
+      <p class="section-intro">Fill out the form below or contact us directly.</p>
+
+      <!-- Toast message -->
+      <div class="toast" id="toast-msg"></div>
+
+      <!-- Contact Form -->
+      <form id="contactForm" class="contact-form" method="POST">
+        <div class="form-group">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="name" name="name" required placeholder=" " />
+          <label for="name">Full Name</label>
+        </div>
+
+        <div class="form-group">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="email" name="email" required placeholder=" " />
+          <label for="email">Email Address</label>
+        </div>
+
+        <div class="form-group">
+          <i class="fas fa-comment-dots input-icon"></i>
+          <textarea id="message" name="message" required placeholder=" " rows="5"></textarea>
+          <label for="message">Your Message</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="submitBtn">Send Message</button>
+        </div>
+      </form>
+
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+        <ul>
+          <li><i class="fas fa-phone-alt"></i> +1 (123) 456-7890</li>
+          <li><i class="fas fa-envelope"></i> info@schoolname.com</li>
+          <li><i class="fas fa-map-marker-alt"></i> 123 Main St, City, State, ZIP</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="map-section" aria-label="Our Location">
+    <div class="container">
+      <h2>Find Us Here</h2>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233668.92832209177!2d-73.935242!3d40.730610!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259af2f7e5f57%3A0x72d1cd97f39f3f5d!2sNew+York+City!5e0!3m2!1sen!2sus!4v1614889571259!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2025 School Name. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000 });
+  </script>
+
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById("submitBtn");
+      const toast = document.getElementById("toast-msg");
+
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+
+      const formData = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value
+      };
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await res.json();
+        toast.textContent = data.msg || "Message sent!";
+        toast.className = "toast show";
+
+        if (!res.ok) toast.classList.add("error");
+
+        setTimeout(() => {
+          toast.className = "toast";
+        }, 5000);
+
+        if (res.ok) document.getElementById("contactForm").reset();
+      } catch (error) {
+        toast.textContent = "Something went wrong!";
+        toast.className = "toast show error";
+
+        setTimeout(() => {
+          toast.className = "toast";
+        }, 5000);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Send Message";
+      }
+    });
+  </script>
+
+</body>
+</html>

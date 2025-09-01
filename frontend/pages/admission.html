@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admissions | School Name</title>
+  <meta name="description" content="Explore our admissions process and download our brochure." />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo" aria-label="School Logo">School Name</div>
+    <nav class="sticky-nav" role="navigation">
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="academics.html">Academics</a></li>
+        <li><a href="admissions.html" class="active">Admissions</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero admissions-hero" data-aos="fade-up">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1>Admissions</h1>
+        <p>Join our world-class academic community. Apply today and start your future with us.</p>
+        <a href="#apply-form" class="cta-button">Apply Now</a>
+        <a href="brochure.pdf" class="cta-button download-btn" download="School_Brochure">Download Brochure</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admissions Form Section -->
+<section class="admissions-form" id="apply-form" aria-label="Admissions Form" data-aos="fade-up">
+  <div class="container">
+    <h2 class="section-title">Apply Now</h2>
+    <p class="section-intro">Fill out the form below to start your application process.</p>
+    <form action="submit-form.php" method="POST" class="form">
+      <div class="form-group">
+        <label for="full-name">Full Name</label>
+        <input type="text" id="full-name" name="full-name" required placeholder="Enter your full name" />
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email address" />
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number" />
+      </div>
+
+      <div class="form-group">
+        <label for="grade">Grade Applying For</label>
+        <select id="grade" name="grade" required>
+          <option value="" disabled selected>Select Grade</option>
+          <option value="K-5">K-5</option>
+          <option value="6-8">6-8</option>
+          <option value="9-12">9-12</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Additional Information</label>
+        <textarea id="message" name="message" rows="5" placeholder="Any additional information you'd like to provide"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Submit Application</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2025 School Name. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000 });
+  </script>
+</body>
+</html>

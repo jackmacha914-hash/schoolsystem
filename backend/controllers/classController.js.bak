@@ -1,0 +1,336 @@
+const Class = require('../models/Class');
+const User = require('../models/User');
+const { validationResult } = require('express-validator');
+
+// Create a new class
+const createClass = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, level, stream, capacity, roomNumber, academicYear } = req.body;
+    
+    // Check if class with same name and stream already exists for the academic year
+    const existingClass = await Class.findOne({
+      name,
+      stream: stream || null,
+      academicYear
+    });
+
+    if (existingClass) {
+      return res.status(400).json({ 
+        message: `A ${name}${stream ? ' ' + stream : ''} class already exists for ${academicYear}` 
+      });
+    }
+
+    const newClass = new Class({
+      name,
+      level,
+      stream: stream || null,
+      capacity,
+      roomNumber: roomNumber || '',
+      academicYear,
+      classTeacher: req.user.id,
+      students: [],
+      studentCount: 0
+    });
+
+    await newClass.save();
+    
+    // Populate the classTeacher field with user details
+    await newClass.populate('classTeacher', 'name email');
+    
+    res.status(201).json({
+      message: 'Class created successfully',
+      class: newClass
+    });
+  } catch (error) {
+    console.error('Error creating class:', error);
+    res.status(500).json({ 
+      message: 'Server error creating class',
+      error: error.message 
+    });
+  }
+};
+
+// Get all classes with optional filtering
+const getClasses = async (req, res) => {
+  try {
+    const { level, academicYear, isActive } = req.query;
+    const query = {};
+    
+    if (level) query.level = level;
+    if (academicYear) query.academicYear = academicYear;
+    if (isActive !== undefined) query.isActive = isActive === 'true';
+    
+    const classes = await Class.find(query)
+      .populate('classTeacher', 'name email')
+      .populate('students', 'name email')
+      .sort({ level: 1, name: 1, stream: 1 });
+    
+    res.json(classes);
+  } catch (error) {
+    console.error('Error fetching classes:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching classes',
+      error: error.message 
+    });
+  }
+};
+
+// Get all classes for a specific teacher
+const getTeacherClasses = async (req, res) => {
+  try {
+    const { academicYear } = req.query;
+    const query = { classTeacher: req.user.id };
+    
+    if (academicYear) {
+      query.academicYear = academicYear;
+    }
+    
+    const classes = await Class.find(query)
+      .populate('students', 'name email')
+      .sort({ level: 1, name: 1, stream: 1 });
+    
+    res.json(classes);
+  } catch (error) {
+    console.error('Error fetching teacher classes:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching teacher classes',
+      error: error.message 
+    });
+  }
+};
+
+// Get class levels
+const getClassLevels = async (req, res) => {
+  try {
+    const levels = await Class.distinct('level');
+    res.json(levels);
+  } catch (error) {
+    console.error('Error fetching class levels:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching class levels',
+      error: error.message 
+    });
+  }
+};
+
+// Get classes by level
+const getClassesByLevel = async (req, res) => {
+  try {
+    const { level } = req.params;
+    const { academicYear } = req.query;
+    
+    const query = { level };
+    if (academicYear) {
+      query.academicYear = academicYear;
+    }
+    
+    const classes = await Class.find(query)
+      .select('name stream academicYear')
+      .sort({ name: 1, stream: 1 });
+    
+    res.json(classes);
+  } catch (error) {
+    console.error('Error fetching classes by level:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching classes by level',
+      error: error.message 
+    });
+  }
+};
+
+// Get class by ID
+const getClassById = async (req, res) => {
+  try {
+    const classData = await Class.findById(req.params.id)
+      .populate('classTeacher', 'name email')
+      .populate('students', 'name email')
+      .populate('subjects', 'name code');
+    
+    if (!classData) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+    
+    res.json(classData);
+  } catch (error) {
+    console.error('Error fetching class:', error);
+    res.status(500).json({ message: 'Server error fetching class' });
+  }
+};
+
+// Update class
+const updateClass = async (req, res) => {
+  try {
+    const { name, description, subject, schedule, academicYear } = req.body;
+    
+    const updatedClass = await Class.findOneAndUpdate(
+      { _id: req.params.id, teacher: req.user.id },
+      { name, description, subject, schedule, academicYear },
+      { new: true, runValidators: true }
+    );
+    
+    if (!updatedClass) {
+      return res.status(404).json({ message: 'Class not found or not authorized' });
+    }
+    
+    res.json(updatedClass);
+  } catch (error) {
+    console.error('Error updating class:', error);
+    res.status(500).json({ message: 'Server error updating class' });
+  }
+};
+
+// Delete class
+const deleteClass = async (req, res) => {
+  try {
+    const deletedClass = await Class.findOneAndDelete({
+      _id: req.params.id,
+      teacher: req.user.id
+    });
+    
+    if (!deletedClass) {
+      return res.status(404).json({ message: 'Class not found or not authorized' });
+    }
+    
+    res.json({ message: 'Class deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting class:', error);
+    res.status(500).json({ message: 'Server error deleting class' });
+  }
+};
+
+// Add student to class
+const addStudentToClass = async (req, res) => {
+  try {
+    const { classId, studentId } = req.params;
+    
+    // Check if class exists and has capacity
+    const classData = await Class.findById(classId);
+    if (!classData) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+    
+    if (classData.studentCount >= classData.capacity) {
+      return res.status(400).json({ message: 'Class has reached maximum capacity' });
+    }
+    
+    // Check if student exists and is a student
+    const student = await User.findOne({ _id: studentId, role: 'student' });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    
+    // Check if student is already in the class
+    if (classData.students.includes(studentId)) {
+      return res.status(400).json({ message: 'Student is already in this class' });
+    }
+    
+    // Check if student is already in another class for the same academic year
+    const existingClass = await Class.findOne({
+      _id: { $ne: classId },
+      students: studentId,
+      academicYear: classData.academicYear
+    });
+    
+    if (existingClass) {
+      return res.status(400).json({ 
+        message: `Student is already enrolled in ${existingClass.name} ${existingClass.stream || ''} for ${existingClass.academicYear}`
+      });
+    }
+    
+    // Add student to class and update student's class
+    classData.students.push(studentId);
+    classData.studentCount += 1;
+    
+    student.class = {
+      classId: classData._id,
+      className: classData.name + (classData.stream ? ' ' + classData.stream : '')
+    };
+    
+    await Promise.all([classData.save(), student.save()]);
+    
+    res.json({ 
+      message: 'Student added to class successfully',
+      studentCount: classData.studentCount
+    });
+  } catch (error) {
+    console.error('Error adding student to class:', error);
+    res.status(500).json({ 
+      message: 'Server error adding student to class',
+      error: error.message 
+    });
+  }
+};
+
+// Remove student from class
+const removeStudentFromClass = async (req, res) => {
+  try {
+    const { classId, studentId } = req.params;
+    
+    const updatedClass = await Class.findOneAndUpdate(
+      { _id: req.params.id, teacher: req.user.id },
+      { $pull: { students: studentId } },
+      { new: true }
+    );
+    
+    if (!updatedClass) {
+      return res.status(404).json({ message: 'Class not found or not authorized' });
+    }
+    
+    res.json(updatedClass);
+  } catch (error) {
+    console.error('Error removing student from class:', error);
+    res.status(500).json({ message: 'Server error removing student from class' });
+  }
+};
+
+// Get class streams
+const getClassStreams = async (req, res) => {
+  try {
+    const streams = await Class.distinct('stream', { 
+      stream: { $ne: null } 
+    });
+    
+    res.json(streams);
+  } catch (error) {
+    console.error('Error fetching class streams:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching class streams',
+      error: error.message 
+    });
+  }
+};
+
+// Get academic years
+const getAcademicYears = async (req, res) => {
+  try {
+    const years = await Class.distinct('academicYear');
+    res.json(years.sort().reverse()); // Most recent years first
+  } catch (error) {
+    console.error('Error fetching academic years:', error);
+    res.status(500).json({ 
+      message: 'Server error fetching academic years',
+      error: error.message 
+    });
+  }
+};
+
+// Export all controller methods
+module.exports = {
+  createClass: createClass,
+  getClasses: getClasses,
+  getTeacherClasses: getTeacherClasses,
+  getClassById: getClassById,
+  updateClass: updateClass,
+  deleteClass: deleteClass,
+  addStudentToClass: addStudentToClass,
+  removeStudentFromClass: removeStudentFromClass,
+  getClassLevels: getClassLevels,
+  getClassesByLevel: getClassesByLevel,
+  getClassStreams: getClassStreams,
+  getAcademicYears: getAcademicYears
+};
