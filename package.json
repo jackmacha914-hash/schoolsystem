@@ -9,7 +9,7 @@
     "client": "cd frontend && serve -s . -l 3000",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "build": "cd backend && npm install"
+    "build": "cd backend && npm install --production=false"
   },
   "dependencies": {
     "concurrently": "^8.2.0"
