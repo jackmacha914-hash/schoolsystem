@@ -20,7 +20,7 @@ rm -rf node_modules package-lock.json
 
 # Install specific versions of problematic packages
 echo "Installing specific package versions..."
-npm install mime@2.6.0 --save-exact
+npm install mime@1.6.0 --save-exact
 npm install send@0.17.2 --save-exact
 
 # Install all other dependencies
