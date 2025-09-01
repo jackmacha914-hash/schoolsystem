@@ -12,7 +12,8 @@
     "build": "cd backend && npm install --production=false"
   },
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "mime": "^1.6.0"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "18.x"
+    "node": "16.x"
   },
   "bugs": {
     "url": "https://github.com/jackmacha914-hash/schoolsystem/issues"
