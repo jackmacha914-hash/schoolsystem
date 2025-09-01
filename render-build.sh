@@ -3,6 +3,8 @@
 set -e
 
 echo "=== Starting build process ==="
+echo "Node.js version: $(node -v)"
+echo "npm version: $(npm -v)"
 
 # Install root dependencies
 echo "Installing root dependencies..."
@@ -25,9 +27,13 @@ npm install send@0.17.2 --save-exact
 echo "Installing backend dependencies..."
 npm install --production=false
 
+# Apply MIME patch
+echo "Applying MIME patch..."
+cd ..
+node patch-mime.js
+cd backend
+
 # Go back to root
 cd ..
 
 echo "=== Build completed successfully! ==="
-echo "Node.js version: $(node -v)"
-echo "npm version: $(npm -v)"
