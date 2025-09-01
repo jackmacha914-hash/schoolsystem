@@ -29,9 +29,7 @@ npm install --production=false
 
 # Apply MIME patch
 echo "Applying MIME patch..."
-cd ..
-node patch-mime.js
-cd backend
+node mime-patch.js
 
 # Go back to root
 cd ..
