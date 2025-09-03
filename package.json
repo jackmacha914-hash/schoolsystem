@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "School Management System",
   "main": "server-prod.js",
-  "scripts": {
-    "start": "node server-prod.js",
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && serve -s . -l 3000",
+"scripts": {
+  "start": "cd backend && npm start",
+  "build": "cd backend && npm install"
+}
+   "client": "cd frontend && serve -s . -l 3000",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "cd backend && npm install --production=false"
